@@ -40,6 +40,7 @@
         PC   360K  DD Double-Sided 5.25"
         PC   720K  DD Double-Sided 3.5"
         PC   1.2M  HD Double-Sided 5.25"
+        PC   1.2M  HD Double-Sided 8"/5.25"/3.5" NEC format
         PC   1.44M HD Double-Sided 3.5"
         PC   2.88M ED Double-Sided 3.5"
 */
@@ -91,6 +92,7 @@ impl FromStr for StandardFormatParam {
             "pc_360k" => Ok(StandardFormatParam(StandardFormat::PcFloppy360)),
             "pc_720k" => Ok(StandardFormatParam(StandardFormat::PcFloppy720)),
             "pc_1200k" => Ok(StandardFormatParam(StandardFormat::PcFloppy1200)),
+            "pc_1232k" => Ok(StandardFormatParam(StandardFormat::PcFloppy1232)),
             "pc_1440k" => Ok(StandardFormatParam(StandardFormat::PcFloppy1440)),
             "pc_2880k" => Ok(StandardFormatParam(StandardFormat::PcFloppy2880)),
             #[cfg(feature = "amiga")]
@@ -111,6 +113,7 @@ impl Display for StandardFormatParam {
             StandardFormat::PcFloppy360 => write!(f, "pc_360k"),
             StandardFormat::PcFloppy720 => write!(f, "pc_720k"),
             StandardFormat::PcFloppy1200 => write!(f, "pc_1200k"),
+            StandardFormat::PcFloppy1232 => write!(f, "pc_1232k"),
             StandardFormat::PcFloppy1440 => write!(f, "pc_1440k"),
             StandardFormat::PcFloppy2880 => write!(f, "pc_2880k"),
             #[cfg(feature = "amiga")]
@@ -139,6 +142,7 @@ impl StandardFormatParam {
             ("pc_360k".to_string(), StandardFormat::PcFloppy360),
             ("pc_720k".to_string(), StandardFormat::PcFloppy720),
             ("pc_1200k".to_string(), StandardFormat::PcFloppy1200),
+            ("pc_1232k".to_string(), StandardFormat::PcFloppy1232),
             ("pc_1440k".to_string(), StandardFormat::PcFloppy1440),
             ("pc_2880k".to_string(), StandardFormat::PcFloppy2880),
             #[cfg(feature = "amiga")]
@@ -163,6 +167,8 @@ pub enum StandardFormat {
     PcFloppy720,
     /// A double-sided, 15-sectored, 96tpi, high-density disk
     PcFloppy1200,
+    /// A double-sided, 8-sectored, 96tpi, high-density disk (common on Japanese PCs)
+    PcFloppy1232,
     /// A double-sided, 18-sectored, 96tpi, high-density disk
     PcFloppy1440,
     /// A double-sided, 36-sectored, 96tpi, high-density disk
@@ -184,6 +190,7 @@ impl Display for StandardFormat {
             StandardFormat::PcFloppy360 => write!(f, "360KB 5.25\" DD"),
             StandardFormat::PcFloppy720 => write!(f, "720KB 3.5\" DD"),
             StandardFormat::PcFloppy1200 => write!(f, "1.2MB 5.25\" HD"),
+            StandardFormat::PcFloppy1232 => write!(f, "1.2MB 2HD"),
             StandardFormat::PcFloppy1440 => write!(f, "1.44MB 3.5\" HD"),
             StandardFormat::PcFloppy2880 => write!(f, "2.88MB 3.5\" ED"),
             #[cfg(feature = "amiga")]
@@ -210,6 +217,7 @@ impl StandardFormat {
             StandardFormat::PcFloppy360 => SectorLayout::new(40, 2, 9, 1, 512),
             StandardFormat::PcFloppy720 => SectorLayout::new(80, 2, 9, 1, 512),
             StandardFormat::PcFloppy1200 => SectorLayout::new(80, 2, 15, 1, 512),
+            StandardFormat::PcFloppy1232 => SectorLayout::new(77, 2, 8, 1, 1024),
             StandardFormat::PcFloppy1440 => SectorLayout::new(80, 2, 18, 1, 512),
             StandardFormat::PcFloppy2880 => SectorLayout::new(80, 2, 36, 1, 512),
             #[cfg(feature = "amiga")]
@@ -260,6 +268,7 @@ impl StandardFormat {
             StandardFormat::PcFloppy360 => TrackDataRate::Rate250Kbps(1.0),
             StandardFormat::PcFloppy720 => TrackDataRate::Rate250Kbps(1.0),
             StandardFormat::PcFloppy1200 => TrackDataRate::Rate500Kbps(1.0),
+            StandardFormat::PcFloppy1232 => TrackDataRate::Rate500Kbps(1.0),
             StandardFormat::PcFloppy1440 => TrackDataRate::Rate500Kbps(1.0),
             StandardFormat::PcFloppy2880 => TrackDataRate::Rate1000Kbps(1.0),
             #[cfg(feature = "amiga")]
@@ -286,6 +295,7 @@ impl StandardFormat {
             StandardFormat::PcFloppy360 => DiskRpm::Rpm300(1.0),
             StandardFormat::PcFloppy720 => DiskRpm::Rpm300(1.0),
             StandardFormat::PcFloppy1200 => DiskRpm::Rpm360(1.0),
+            StandardFormat::PcFloppy1232 => DiskRpm::Rpm360(1.0),
             StandardFormat::PcFloppy1440 => DiskRpm::Rpm300(1.0),
             StandardFormat::PcFloppy2880 => DiskRpm::Rpm300(1.0),
             #[cfg(feature = "amiga")]
@@ -305,6 +315,7 @@ impl StandardFormat {
             StandardFormat::PcFloppy360 => 100_000,
             StandardFormat::PcFloppy720 => 100_000,
             StandardFormat::PcFloppy1200 => 166_666,
+            StandardFormat::PcFloppy1232 => 166_666,
             StandardFormat::PcFloppy1440 => 200_000,
             StandardFormat::PcFloppy2880 => 400_000,
             #[cfg(feature = "amiga")]
@@ -323,6 +334,7 @@ impl StandardFormat {
             StandardFormat::PcFloppy360 => 0x50,
             StandardFormat::PcFloppy720 => 0x50,
             StandardFormat::PcFloppy1200 => 0x54,
+            StandardFormat::PcFloppy1232 => 0x54, // TODO: Match real drive format
             StandardFormat::PcFloppy1440 => 0x6C,
             StandardFormat::PcFloppy2880 => 0x53,
             #[cfg(feature = "amiga")]
@@ -354,6 +366,7 @@ impl StandardFormat {
             StandardFormat::PcFloppy360 => 368_640,
             StandardFormat::PcFloppy720 => 737_280,
             StandardFormat::PcFloppy1200 => 1_228_800,
+            StandardFormat::PcFloppy1232 => 1_261_568,
             StandardFormat::PcFloppy1440 => 1_474_560,
             StandardFormat::PcFloppy2880 => 2_949_120,
             #[cfg(feature = "amiga")]
@@ -397,6 +410,7 @@ impl TryFrom<usize> for StandardFormat {
             368_640 => StandardFormat::PcFloppy360,
             737_280 => StandardFormat::PcFloppy720,
             1_228_800 => StandardFormat::PcFloppy1200,
+            1_261_568 => StandardFormat::PcFloppy1232,
             1_474_560 => StandardFormat::PcFloppy1440,
             2_949_120 => StandardFormat::PcFloppy2880,
             #[cfg(feature = "amiga")]
@@ -426,6 +440,7 @@ impl TryFrom<&DiskChs> for StandardFormat {
             (40, 2, 9) => StandardFormat::PcFloppy360,
             (80, 2, 9) => StandardFormat::PcFloppy720,
             (80, 2, 15) => StandardFormat::PcFloppy1200,
+            (77, 2, 8) => StandardFormat::PcFloppy1232,
             (80, 2, 18) => StandardFormat::PcFloppy1440,
             (80, 2, 36) => StandardFormat::PcFloppy2880,
             #[cfg(feature = "amiga")]

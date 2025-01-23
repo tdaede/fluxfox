@@ -71,7 +71,7 @@ impl From<StandardFormat> for Platform {
     fn from(format: StandardFormat) -> Self {
         use crate::types::standard_format::StandardFormat::*;
         match format {
-            PcFloppy160 | PcFloppy180 | PcFloppy320 | PcFloppy360 | PcFloppy720 | PcFloppy1200 | PcFloppy1440
+            PcFloppy160 | PcFloppy180 | PcFloppy320 | PcFloppy360 | PcFloppy720 | PcFloppy1200 | PcFloppy1232 | PcFloppy1440
             | PcFloppy2880 => Platform::IbmPc,
             #[cfg(feature = "amiga")]
             AmigaFloppy880 | AmigaFloppy1760 => Platform::Amiga,
