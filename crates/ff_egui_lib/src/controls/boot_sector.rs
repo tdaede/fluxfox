@@ -79,7 +79,7 @@ impl BootSectorWidget {
 
         ui.vertical(|ui| {
             if !self.loaded {
-                ErrorBanner::new("No disk loaded").small().show(ui);
+                ErrorBanner::new("No boot sector found").small().show(ui);
             }
 
             if let Some(format) = self.format {
