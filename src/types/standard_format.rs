@@ -441,6 +441,7 @@ impl TryFrom<&DiskChs> for StandardFormat {
             (80, 2, 9) => StandardFormat::PcFloppy720,
             (80, 2, 15) => StandardFormat::PcFloppy1200,
             (77, 2, 8) => StandardFormat::PcFloppy1232,
+            (80, 2, 8) => StandardFormat::PcFloppy1232,
             (80, 2, 18) => StandardFormat::PcFloppy1440,
             (80, 2, 36) => StandardFormat::PcFloppy2880,
             #[cfg(feature = "amiga")]
