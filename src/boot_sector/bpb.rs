@@ -99,6 +99,7 @@ impl TryFrom<&BiosParameterBlock2> for StandardFormat {
             720 => best_match = Some(StandardFormat::PcFloppy360),
             1440 => best_match = Some(StandardFormat::PcFloppy720),
             1200 => best_match = Some(StandardFormat::PcFloppy1200),
+            1232 => best_match = Some(StandardFormat::PcFloppy1232),
             2880 => best_match = Some(StandardFormat::PcFloppy1440),
             5760 => best_match = Some(StandardFormat::PcFloppy2880),
             _ => {}
