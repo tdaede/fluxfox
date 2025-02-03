@@ -89,8 +89,8 @@ pub struct CreatorString {
 }
 
 impl BootSector {
-    pub fn new<T: ReadSeek>(buffer: &mut T) -> Result<Self, DiskImageError> {
-        let mut sector_buf = [0; 512];
+    pub fn new<T: ReadSeek>(buffer: &mut T, size: usize) -> Result<Self, DiskImageError> {
+        let mut sector_buf = vec![0; size];
         buffer.seek(SeekFrom::Start(0))?;
         // Save a copy of the boot sector internally.
         buffer.read_exact(&mut sector_buf)?;

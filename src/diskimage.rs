@@ -1286,7 +1286,7 @@ impl DiskImage {
 
         // Create a BootSector object from the buffer
         let mut bs_cursor = Cursor::new(boot_sector_buf);
-        let mut bootsector = BootSector::new(&mut bs_cursor)?;
+        let mut bootsector = BootSector::new(&mut bs_cursor, DEFAULT_BOOT_SECTOR.len())?;
 
         // Update the boot sector with the disk format
         bootsector.update_bpb_from_format(format)?;
@@ -1341,10 +1341,11 @@ impl DiskImage {
         let ti = self.track_map[0][0];
         let track = &mut self.track_pool[ti];
 
-        match track.read_sector(DiskChsnQuery::new(0, 0, 1, 2), None, None, RwScope::DataOnly, true) {
-            Ok(result) => Ok(result.read_buf[result.data_range].to_vec()),
-            Err(e) => Err(e),
+        match track.read_sector(DiskChsnQuery::new(0, 0, 1, None), None, None, RwScope::DataOnly, true) {
+            Ok(result) => return Ok(result.read_buf[result.data_range].to_vec()),
+            Err(_) => {},
         }
+        Err(DiskImageError::IdError)
     }
 
     pub(crate) fn write_boot_sector(&mut self, buf: &[u8]) -> Result<(), DiskImageError> {
@@ -1362,7 +1363,7 @@ impl DiskImage {
 
     pub(crate) fn parse_boot_sector(&mut self, buf: &[u8]) -> Result<(), DiskImageError> {
         let mut cursor = Cursor::new(buf);
-        let bpb = BootSector::new(&mut cursor)?;
+        let bpb = BootSector::new(&mut cursor, buf.len())?;
         self.boot_sector = Some(bpb);
         Ok(())
     }
@@ -1402,7 +1403,7 @@ impl DiskImage {
         // format disk image (but do not rely on this as the sole method of determining the disk
         // format)
         match self.read_boot_sector() {
-            Ok(buf) => _ = self.parse_boot_sector(&buf),
+            Ok(buf) => {dbg!(&buf); _ = self.parse_boot_sector(&buf)},
             Err(e) => {
                 log::warn!("post_load_process(): Failed to read boot sector: {:?}", e);
             }
